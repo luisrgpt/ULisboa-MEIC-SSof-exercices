@@ -1,0 +1,168 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	<Directory /var/www/elgg>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+	<Directory /var/www/atacker>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache2/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/log/apache2/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.CSRFLabCollabtive.com
+	DocumentRoot /var/www/CSRF/Collabtive/
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.CSRFLabAttacker.com
+	DocumentRoot /var/www/CSRF/Attacker
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.SQLLabCollabtive.com
+	DocumentRoot /var/www/SQL/Collabtive/
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.XSSLabCollabtive.com
+	DocumentRoot /var/www/XSS/Collabtive/
+</VirtualHost>
+
+<VirtualHost *:80 *:8080>
+        ServerName www.SOPLab.com
+        DocumentRoot /var/www/SOP
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.SOPLabCollabtive.com
+        DocumentRoot /var/www/SOP/Collabtive/
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.SOPLabAttacker.com
+        DocumentRoot /var/www/SOP/attacker
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.XSSLabElgg.com
+        DocumentRoot /var/www/XSS/elgg
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.atacker.com
+        DocumentRoot /var/www/atacker
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.CSRFLabElgg.com
+        DocumentRoot /var/www/CSRF/elgg
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+        ServerName www.SeedLabElgg.com
+        DocumentRoot /var/www/SeedElgg
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerName www.WTLabElgg.com
+        DocumentRoot /var/www/webtracking/elgg
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.wtmobilestore.com
+	DocumentRoot /var/www/webtracking/MobileStore
+	ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.wtshoestore.com
+	DocumentRoot /var/www/webtracking/ShoeStore
+	ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.wtelectronicsstore.com
+	DocumentRoot /var/www/webtracking/ElectronicStore
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+	ServerName www.wtcamerastore.com
+	DocumentRoot /var/www/webtracking/CameraStore
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+	ServerName www.wtlabadserver.com
+	DocumentRoot /var/www/webtracking/adserver
+        ErrorLog /var/log/apache2/error.log
+        LogLevel debug
+        CustomLog /var/log/apache2/access.log combined
+</VirtualHost>

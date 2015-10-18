@@ -1,0 +1,39 @@
+127.0.0.1	localhost
+127.0.1.1	ubuntu
+
+# The following lines are for SEED labs
+127.0.0.1	www.OriginalPhpbb3.com
+
+127.0.0.1	www.CSRFLabCollabtive.com
+127.0.0.1	www.CSRFLabAttacker.com
+
+127.0.0.1	www.SQLLabCollabtive.com
+
+127.0.0.1	www.XSSLabCollabtive.com
+
+127.0.0.1	www.SOPLab.com
+127.0.0.1	www.SOPLabAttacker.com
+127.0.0.1	www.SOPLabCollabtive.com
+
+127.0.0.1       www.OriginalphpMyAdmin.com
+
+127.0.0.1	www.CSRFLabElgg.com
+127.0.0.1	www.XSSLabElgg.com
+127.0.0.1	www.SeedLabElgg.com
+127.0.0.1	www.WTLabElgg.com
+127.0.0.1	www.atacker.com
+
+127.0.0.1	www.wtmobilestore.com
+127.0.0.1	www.wtshoestore.com
+127.0.0.1	www.wtelectronicsstore.com
+127.0.0.1	www.wtcamerastore.com
+
+127.0.0.1	www.wtlabadserver.com
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
