@@ -1,0 +1,27 @@
+Changes:
+=======
+
+22.Oct.2015
+- write the corrected code to files was fixed
+
+21.Oct.2015
+- module corrector was enhanced, fixing some bugs when write to monitor and file
+
+20.Oct.2015
+- XSS sanitization functions bug fixed
+- command injection vulnerabilities under output functions (excepting XSS) are detected
+- accept CRLF eol
+- name of directory with with spaces is accepted
+
+02.Oct.2015
+- the flag -all to detect all types of vulnerabilities
+- fixed some output bugs in correction of source code
+- unquoted arguments in  call functions are allowed
+
+29.Jul.2015
+The execution of the tool under Windows was fixed.
+
+28.Mar.2015
+The sanitization and validation functions used by the tool to perform the code correction were improved. 
+
+

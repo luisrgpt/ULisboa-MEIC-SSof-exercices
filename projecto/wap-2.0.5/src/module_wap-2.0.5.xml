@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_wap-2.0.5" default="compile.module.wap-2.0.5">
+  <dirname property="module.wap-2.0.5.basedir" file="${ant.file.module_wap-2.0.5}"/>
+  
+  <property name="module.jdk.home.wap-2.0.5" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.wap-2.0.5" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.wap-2.0.5" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.wap-2.0.5" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="wap-2.0.5.output.dir" value="${module.wap-2.0.5.basedir}/../out/production/wap-2.0.5"/>
+  <property name="wap-2.0.5.testoutput.dir" value="${module.wap-2.0.5.basedir}/../out/test/wap-2.0.5"/>
+  
+  <path id="wap-2.0.5.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="wap-2.0.5.module.production.classpath">
+    <path refid="${module.jdk.classpath.wap-2.0.5}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="wap-2.0.5.runtime.production.module.classpath">
+    <pathelement location="${wap-2.0.5.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="wap-2.0.5.module.classpath">
+    <path refid="${module.jdk.classpath.wap-2.0.5}"/>
+    <pathelement location="${wap-2.0.5.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="wap-2.0.5.runtime.module.classpath">
+    <pathelement location="${wap-2.0.5.testoutput.dir}"/>
+    <pathelement location="${wap-2.0.5.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.wap-2.0.5">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.wap-2.0.5">
+    <patternset refid="excluded.from.module.wap-2.0.5"/>
+  </patternset>
+  
+  <path id="wap-2.0.5.module.sourcepath">
+    <dirset dir="${module.wap-2.0.5.basedir}">
+      <include name="java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.wap-2.0.5" depends="compile.module.wap-2.0.5.production,compile.module.wap-2.0.5.tests" description="Compile module wap-2.0.5"/>
+  
+  <target name="compile.module.wap-2.0.5.production" depends="register.custom.compilers" description="Compile module wap-2.0.5; production classes">
+    <mkdir dir="${wap-2.0.5.output.dir}"/>
+    <javac2 destdir="${wap-2.0.5.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.wap-2.0.5}/javac">
+      <compilerarg line="${compiler.args.wap-2.0.5}"/>
+      <bootclasspath refid="wap-2.0.5.module.bootclasspath"/>
+      <classpath refid="wap-2.0.5.module.production.classpath"/>
+      <src refid="wap-2.0.5.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.wap-2.0.5"/>
+    </javac2>
+    
+    <copy todir="${wap-2.0.5.output.dir}">
+      <fileset dir="${module.wap-2.0.5.basedir}/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.wap-2.0.5.tests" depends="register.custom.compilers,compile.module.wap-2.0.5.production" description="compile module wap-2.0.5; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.wap-2.0.5" description="cleanup module">
+    <delete dir="${wap-2.0.5.output.dir}"/>
+    <delete dir="${wap-2.0.5.testoutput.dir}"/>
+  </target>
+</project>
