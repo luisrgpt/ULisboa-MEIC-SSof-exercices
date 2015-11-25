@@ -21,7 +21,6 @@ import java.util.*;
  * @author iberiam
  */
 public class GlobalDataSqli {
-
     // user input
     private final static String UserInputs[] = {"_GET", "_POST", "_COOKIE", "_REQUEST", "HTTP_GET_VARS", "HTTP_POST_VARS", "HTTP_COOKIE_VARS", "HTTP_REQUEST_VARS"};
     public static List<String> UserInput = Arrays.asList(UserInputs);

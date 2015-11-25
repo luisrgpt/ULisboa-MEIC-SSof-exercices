@@ -3,6 +3,10 @@
  * and open the template in the editor.
  */
 
+import org.homeunix.wap.ldapi.FuncAndIncLDAPI;
+import org.homeunix.wap.ldapi.GlobalDataLDAPi;
+import org.homeunix.wap.ldapi.OutputAnalysisLDAPi;
+import org.homeunix.wap.ldapi.buildWalkerTree_ldapi;
 import org.homeunix.wap.utils.GlobalDataApp;
 import org.homeunix.wap.utils.Dates;
 import org.homeunix.wap.utils.ManageFiles;
@@ -47,8 +51,8 @@ public class wapAnalysis {
         int i, j;
         String input="";
         FileWriter outFile = null;
-        String diff_date=null, diff_date_sqli=null, diff_date_fidt=null, diff_date_xss=null;
-        Long sumSecs_sqli = 0L, sumSecs_fidt = 0L, sumSecs_xss = 0L;
+        String diff_date=null, diff_date_sqli=null, diff_date_fidt=null, diff_date_xss=null, diff_date_ldapi;
+        Long sumSecs_sqli = 0L, sumSecs_fidt = 0L, sumSecs_xss = 0L, sumSecs_ldapi = 0L;
         
         if(GlobalDataApp.args_flags[4] == 1){
             File out = new File(fileToOut);
@@ -102,6 +106,9 @@ public class wapAnalysis {
         if(GlobalDataApp.args_flags[7] == 1)
         System.out.println("      - Cross Site Scripting - XSS ");
 
+        if(GlobalDataApp.args_flags[10] == 1)
+            System.out.println("      - LDAP Injection ");
+
         System.out.println("\n        (this task can take several minutes, depending on number of the files to");        
         System.out.println("         analyze. So, you can take a coffee or something else :-) )");
         
@@ -151,7 +158,37 @@ public class wapAnalysis {
                 sumSecs_sqli = sumSecs_sqli + end_date_sqli - begin_date_sqli;
                 //System.out.println("done");
             }
-            
+
+            // LDAPI - performs walker tree to create symboltables
+            if(GlobalDataApp.args_flags[10] == 1){
+
+                // inicio TIMER LDAPI
+                Date date1 = new Date(System.currentTimeMillis());
+                Long begin_date_ldapi = date1.getTime();
+
+                // build walker tree to LDAPI
+                try{
+                    buildWalkerTree_ldapi ldapi = new buildWalkerTree_ldapi(nodes, input, GlobalDataLDAPi.MainSymbolTable, GlobalDataLDAPi.MainIncludeFilesTable,
+                            GlobalDataLDAPi.MainFunctionsTable, GlobalDataLDAPi.MainFunctionsTaintedTable,
+                            GlobalDataLDAPi.MainTaintedTable, GlobalDataLDAPi.mus, GlobalDataLDAPi.MainLinesToCorrect,
+                            GlobalDataLDAPi.MainClassesTable, GlobalDataLDAPi.MainInstancesTable, fileList);
+
+                } catch (IOException e){
+                    System.out.println("Error in processing of the file: "+input);
+                } catch (RecognitionException ex) {
+                    Logger.getLogger(wapAnalysis.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try{
+                    nodes.reset();
+                } catch (Exception e) {}
+
+                // fim TIMER LDAPI
+                date1 = new Date(System.currentTimeMillis());
+                Long end_date_ldapi = date1.getTime();
+                sumSecs_ldapi = sumSecs_ldapi + end_date_ldapi - begin_date_ldapi;
+                //System.out.println("done");
+            }
+
             // RFI/LFI/DT/SCD/OS/Eval - performs walker tree to create symboltables
             if(GlobalDataApp.args_flags[6] == 1){
                 
@@ -212,6 +249,8 @@ public class wapAnalysis {
         Map mst_initial;
         if(GlobalDataApp.args_flags[3] == 1)
             mst_initial = GlobalDataSqli.MainSymbolTable;
+        else if(GlobalDataApp.args_flags[10] == 1)
+            mst_initial = GlobalDataLDAPi.MainSymbolTable;
         else
             if(GlobalDataApp.args_flags[7] == 1)
                 mst_initial = GlobalDataXSS.MainSymbolTable;
@@ -301,7 +340,69 @@ public class wapAnalysis {
            
            
        }
-            
+
+        // LDAPI Taint Analise
+        if(GlobalDataApp.args_flags[10] == 1){
+            // System.out.print("      - LDAP Injection ..................................................");
+            // inicio TIMER LDAPI
+            Date date1 = new Date(System.currentTimeMillis());
+            Long begin_date_ldapi = date1.getTime();
+
+            for (it = GlobalDataLDAPi.MainSymbolTable.values().iterator(); it.hasNext();){
+                st_aux = it.next();
+
+                // create structures
+                String file = st_aux.getScopeName();
+                GlobalDataLDAPi.MainNumVul.put(file, 0);
+                GlobalDataLDAPi.MainNumFP.put(file, 0);
+                TaintedTable mts = new TaintedTable(file);
+                GlobalDataLDAPi.MainTaintedTable.put(file, mts);
+                GlobalDataLDAPi.mus.getUntaintedMembers().clear();
+                String ldapFunc="";
+                String connectionDB="";
+                String selectDB = "";
+
+                // MAKES ANALYSIS
+                // mapa que contem as vars da conexao e db do mysql
+                //FIXME: Not really sure what to do with the DB parameters in LDAP (joao)
+                Map <String, String> varsDB = new HashMap <String, String>();
+                varsDB.put("connectionDB", connectionDB);
+                varsDB.put("selectDB", selectDB);
+                Integer ii = -1;
+                varsDB.put("lineMysqliBindParam", ii.toString());
+
+                // Analysis
+                Iterator <Symbol> it1 = st_aux.getMembers().iterator();
+                Scope cs;
+                Symbol sy;
+                for(; it1.hasNext();){
+                    sy = it1.next();
+                    if (sy.getIsVariableSymbol() == false){
+                        try{
+                            cs = (Scope) sy;
+                            FuncAndIncLDAPI css = new FuncAndIncLDAPI(cs);
+                            css.resolveSymbolLDAPI(cs, mts, GlobalDataLDAPi.mus, GlobalDataLDAPi.MainIncludeFilesTable,
+                                    st_aux.getScopeName(), GlobalDataLDAPi.MainFunctionsTable, GlobalDataLDAPi.MainSymbolTable,
+                                    varsDB, GlobalDataLDAPi.MainFunctionsTaintedTable, GlobalDataLDAPi.MainLinesToCorrect,
+                                    GlobalDataLDAPi.MainClassesTable, GlobalDataLDAPi.MainInstancesTable);
+                        } catch (Exception e){
+                            //     System.out.println("Error processing: "+sy.getName());
+                        }
+                    }
+                    //else{
+                    //    st_aux.getMembers().remove(sy);
+                    //}
+                }
+            }
+
+            // fim TIMER SQLI
+            date1 = new Date(System.currentTimeMillis());
+            Long end_date_ldapi = date1.getTime();
+            sumSecs_ldapi = sumSecs_sqli + end_date_ldapi - begin_date_ldapi;
+
+            //System.out.println("done");
+        }
+
         // RFI/LFI/DT/SCD/OS/Eval Taint Analise
         if(GlobalDataApp.args_flags[6] == 1){
             //System.out.print("      - RFI, LFI, DT, SCD, OSCI and PHP code injection .................");
@@ -400,7 +501,8 @@ public class wapAnalysis {
         diff_date_sqli = Dates.DiffDates(sumSecs_sqli);
         diff_date_fidt = Dates.DiffDates(sumSecs_fidt);
         diff_date_xss = Dates.DiffDates(sumSecs_xss);
-        
+        diff_date_ldapi = Dates.DiffDates(sumSecs_ldapi);
+
               
         // fim TIMER
         date = new Date(System.currentTimeMillis());
@@ -436,6 +538,8 @@ public class wapAnalysis {
         String className = null;
         if(GlobalDataApp.args_flags[3] == 1)
             className = "org.homeunix.wap.sqli.GlobalDataSqli";
+        else if(GlobalDataApp.args_flags[10] == 1)
+            className = "org.homeunix.wap.ldapi.GlobalDataLDAPi";
         else
             if(GlobalDataApp.args_flags[6] == 1)
                 className = "org.homeunix.wap.CodeInjection.GlobalDataCodeInj";
@@ -548,6 +652,10 @@ public class wapAnalysis {
         if(GlobalDataApp.args_flags[3] == 1)
             OutputAnalysisSqli.outputAnalysis(type_analyse, outFile, diff_date_sqli, fileList);
 
+        // Sumario da analise LDAPI
+        if(GlobalDataApp.args_flags[10] == 1)
+            OutputAnalysisLDAPi.outputAnalysis(type_analyse, outFile, diff_date_ldapi, fileList);
+
         // Sumario da analise XSS
         if(GlobalDataApp.args_flags[7] == 1)
             OutputAnalysisXSS.outputAnalysis(type_analyse, outFile, diff_date_xss, fileList);
@@ -602,6 +710,7 @@ public class wapAnalysis {
                 fscanner.close();
                                
                 if((GlobalDataApp.args_flags[3] == 1 && GlobalDataSqli.MainNumVul.size() > 0) ||
+                        (GlobalDataApp.args_flags[10] == 1 && GlobalDataLDAPi.MainNumVul.size() > 0) ||
                    (GlobalDataApp.args_flags[6] == 1 && GlobalDataCodeInj.MainNumVul.size() > 0) ||
                    (GlobalDataApp.args_flags[7] == 1 && GlobalDataXSS.MainNumVul.size() > 0)){
                     File dir_dest = new File(System.getProperty("base.dir") + File.separator + "NewFiles" + File.separator + "includes_wap");
@@ -660,6 +769,7 @@ public class wapAnalysis {
                     fscanner.close();
                     
                     if((GlobalDataApp.args_flags[3] == 1 && GlobalDataSqli.MainNumVul.size() > 0) ||
+                            (GlobalDataApp.args_flags[10] == 1 && GlobalDataLDAPi.MainNumVul.size() > 0) ||
                        (GlobalDataApp.args_flags[6] == 1 && GlobalDataCodeInj.MainNumVul.size() > 0) ||
                        (GlobalDataApp.args_flags[7] == 1 && GlobalDataXSS.MainNumVul.size() > 0)){
                         File dir_dest = new File(dir + File.separator + "includes_wap");

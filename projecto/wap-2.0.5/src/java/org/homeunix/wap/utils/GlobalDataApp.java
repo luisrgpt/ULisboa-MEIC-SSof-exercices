@@ -48,8 +48,10 @@ public class GlobalDataApp {
      *          -dbms mysql; -dbms bd2; -dbms pg
      * index 9: presence of -all
      *          presence of all types of detection
+     * index 10: presence of -ldapi
+     *          LDAP analysis
      */
-    public static int args_flags[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public static int args_flags[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     public static int numAnalysis = 0;
     public static String dbms = "mysql";
     public static Classifier cf_lr;

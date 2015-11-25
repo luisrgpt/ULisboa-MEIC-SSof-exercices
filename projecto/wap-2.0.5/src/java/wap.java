@@ -163,6 +163,8 @@ public class wap {
                         indice = 8;
                     if (args[i].equals("-all") == true)
                         indice = 9;
+                    if (args[i].equals("-ldapi") == true)
+                        indice = 10;
 
                     // var que permite verificar os parametros de files para analise
                     int j=0;
@@ -344,7 +346,18 @@ public class wap {
                                 error = true;
                             }
                             break;
-                        } 
+                        }
+                        case 10:{ // verificacao da opcao "-ldapi" - efectuar analise LDAPI
+                            if (GlobalDataApp.args_flags[10] == 0){
+                                GlobalDataApp.args_flags[10] = 1;
+                                j=1;
+                            }
+                            else{
+                                System.out.println("\t"+args[i]+" ...duplicated option");
+                                error = true;
+                            }
+                            break;
+                        }
                         default:{
                             if (j == 0){                              
                                 String line=null;                           
