@@ -28,7 +28,7 @@ public class AutoCorrectLDAP {
         String ldap_final = "";
         LinesToCorrect ltc = getLinesToCorrect(vv.getFileOfLineToSanitize(), MainLinesToCorrect);
         ManageFiles fff = new ManageFiles (vv.getFileOfLineToSanitize());
-        
+
         if (vv.getLdapFunc().equals("myldapi_execute") == true){
                 if (vv.getLineLdapiBindParam() > 0){
                     // Linha de myldapi_bind_param passar para myldapi_stmt_bind_param

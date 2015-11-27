@@ -369,7 +369,7 @@ public class wapAnalysis {
                 varsDB.put("connectionDB", connectionDB);
                 varsDB.put("selectDB", selectDB);
                 Integer ii = -1;
-                varsDB.put("lineMysqliBindParam", ii.toString());
+                varsDB.put("lineLdapiBindParam", ii.toString());
 
                 // Analysis
                 Iterator <Symbol> it1 = st_aux.getMembers().iterator();

@@ -1202,7 +1202,7 @@ try{
             
             if (GlobalDataLDAPi.MainNumVul.containsKey(vv.getFileOf_SS()) == false)
                 GlobalDataLDAPi.MainNumVul.put(vv.getFileOf_SS(), 0);
-            
+
             //try{
             if (vv.IsFP() == 1){                          
                 int nFP = GlobalDataLDAPi.MainNumFP.get(vv.getFileOf_SS()) + 1;
@@ -1215,8 +1215,11 @@ try{
                 }
 
                 /* Correccao */
-                AutoCorrectLDAP acs = new AutoCorrectLDAP(vv);
-                acs.buildCorrectLDAP(MainLinesToCorrect);
+               try {
+                   AutoCorrectLDAP acs = new AutoCorrectLDAP(vv);
+                   acs.buildCorrectLDAP(MainLinesToCorrect);
+               }catch (Exception e){
+               }
             }
             //} catch (Exception e) {}
 
