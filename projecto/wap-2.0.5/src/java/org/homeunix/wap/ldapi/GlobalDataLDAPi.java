@@ -27,7 +27,7 @@ public class GlobalDataLDAPi {
 
     // functions where can occur LDAPi (that receive a filter and/or a dn)
     private final static String TaintFunctions[] = {"ldap_search", "ldap_add", "ldap_compare", "ldap_delete", "ldap_list", "ldap_mod_add",
-                                "ldap_mod_del", "ldap_mod_replace", "ldap_modify_batch", "ldap_modify", "ldap_read", "ldap_rename"};
+                                "ldap_mod_del", "ldap_mod_replace", "ldap_modify_batch", "ldap_modify", "ldap_read", "ldap_rename", "ldap_bind", "ldap_sasl_bind"};
     public static List<String> LDAPIFunctions = Arrays.asList(TaintFunctions);
 
     // functions that make secure the user input
@@ -39,12 +39,11 @@ public class GlobalDataLDAPi {
     public static List<String> LDAPConnectFunctions = Arrays.asList(ConnectFunctions);
 
     // functions to perform bind
-    private final static String SelectDbFunctions[] = {"ldap_bind", "ldap_sasl_bind", };
+    private final static String SelectDbFunctions[] = {};
     public static List<String> LDAPSelectDbFunctions = Arrays.asList(SelectDbFunctions);
     
     // ldap keywords (Not used)
-    private final static String clausules[] = {/*"SELECT", "INSERT INTO", "UPDATE", "ALTER TABLE", "DELETE FROM", "CREATE TABLE", "DROP TABLE",
-                                "CREATE DATABASE", "DROP DATABASE", "FROM", "WHERE", "ORDER BY", "GROUP BY", "HAVING", "(&"*/};
+    private final static String clausules[] = {"(&", "(|" };
     public static List<String> LDAPKeywords = Arrays.asList(clausules);
 
     // create main Tables

@@ -10,7 +10,7 @@ $group = 'SomeGroup';
 $ad = ldap_connect("ldap://{$host}.{$domain}");
 ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-//Do a bind without sanitizing (Not really a vulnerability unless the password is empty and the server authentication is misconfigured)
+//Do a bind without sanitizing 
 $ldapbind = ldap_bind($ad, $user, $password);
 
 //do a search without sanitizing
